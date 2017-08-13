@@ -7,6 +7,7 @@ import re
 import urllib.error
 import urllib.parse
 import urllib.request
+import urllib.robotparser
 
 
 def download(url):
@@ -44,21 +45,23 @@ def crawl_id():
         id += 1
 
 
-def link_crawler(seed_url, link_regex):
+def link_crawler(seed_url, link_regex, max_depth=-1):
     """Crawl from the given seed URL following links matched by link_regex
     """
     crawl_queue = [seed_url]
-    seen = {seed_url}
+    seen = {seed_url:0}
     while crawl_queue:
         url = crawl_queue.pop()
         html = download(url)
-        # filter for links matching our regular expression
-        for link in get_links(html):
-            if re.match(link_regex, link):
-                link = urllib.parse.urljoin(seed_url, link)
-                if link in seen:
-                    continue
-                crawl_queue.append(link)
+        depth = seen[url]
+        if depth != max_depth:
+            for link in get_links(html):
+                if re.match(link_regex, link):
+                    link = urllib.parse.urljoin(seed_url, link)
+                    if link in seen:
+                        continue
+                    seen[link] = depth + 1
+                    crawl_queue.append(link)
 
 
 def get_links(html):
