@@ -2,13 +2,13 @@
 # @Time     : 2017/8/17 23:31
 # @File     : downloader.py
 
+import logging
 import urllib.error
 import urllib.request
-import time
 
 
-def download(url, delay=0):
-    start = time.time()
+def download(url):
+    logging.log(logging.DEBUG, "download %s start", url)
     try:
         request = urllib.request.Request(url)
         respone = urllib.request.urlopen(request)
@@ -16,8 +16,7 @@ def download(url, delay=0):
         content = content.decode()
     except urllib.error.HTTPError as err:
         content = None
-    end = time.time()
-    delay = end - start + delay
-    if delay > 0:
-        time.sleep(end-start)
+        logging.log(logging.INFO, "download %s raise:%s", url, err.msg)
+    else:
+        logging.log(logging.DEBUG, "download %s finished!", url)
     return content

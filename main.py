@@ -7,4 +7,4 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 url = "http://example.webscraping.com/"
-scheduler.Scheduler(url, 1).start()
+scheduler.Scheduler(url, 1, 2).start()
